@@ -1,6 +1,6 @@
-#' An eQTpLot function
+#' An exQTL function
 #'
-#' This function creates an eQTpLot composite
+#' This function creates an exQTL composite
 #' @param GWAS.df Dataframe, one row per SNP, as one might obtain from a PLINK association analysis, with columns :
 #'     CHR          Chromosome for SNP (X coded numerically as 23)
 #'     BP           Chromosomal position for each SNP, in base pairs
@@ -9,7 +9,7 @@
 #'     BETA         Beta for SNP from GWAS analysis
 #'     PHE          (Optional) Name of the phenotype for which the GWAS was run. This column is optional, and is useful if your GWAS.df contains data for multiple phenotypes,
 #'                  such as one might obtain from a PheWAS). The "trait" parameter is subsequently used to filter in the GWAS.df entries for only this phenotype.
-#'                  If GWAS.df does not contain a "PHE" column, eQTpLot will assume all the supplied GWAS data is for the phenotype specified by the "trait" parameter
+#'                  If GWAS.df does not contain a "PHE" column, exQTL will assume all the supplied GWAS data is for the phenotype specified by the "trait" parameter
 #' @param eQTL.df Dataframe, one row per SNP, as one might obtain from the GTEx Portal, with columns:
 #'     SNP.Id       Variant ID (such ws dbSNP ID "rs...". Note: Must be the same naming scheme as used in the GWAS.df to ensure proper matching)
 #'     Gene.Symbol  Gene symbol/name to which the eQTL expression data refers (Note: gene symbol/name must match entries in Genes.df to ensure proper matching)
@@ -22,7 +22,7 @@
 #'                  Alternatively, setting tissue type to "all" (the default setting) will automatically pick the smallest eQTL pvalue for each SNP across all tissues for a PanTissue analysis)
 #'     N            (Optional) The number of samples used to calculate the p-value and NES for the eQTL data. This value is used if performing a MultiTissue or PanTissue analysis with the option eQTL.Collapse.Method set to "meta"
 #' @param Genes.df Dataframe, one row per gene, with the following columns
-#'         (Note: eQTpLot automatically loads a default Genes.df database containing information for both genomic builds hg19 and hg38,
+#'         (Note: exQTL automatically loads a default Genes.df database containing information for both genomic builds hg19 and hg38,
 #'         but you may wish to specify our own Genes.df dataframe if your gene of interest is not included in the default dataframe, or if your eQTL data uses a different gene naming scheme
 #'         (for example, Gencode ID instead of gene symbol)):
 #'     Gene         Gene symbol/name for which the Coordinate data (below) refers to
@@ -33,7 +33,7 @@
 #'     Build        The genome build (either hg19 or hg38) for the location data -
 #'                 the default Genes.df dataframe contains entries for both genome builds for each gene, and the script will select the appropriate entry based on the specified gbuild (default is hg19)).
 #' @param LD.df Optional dataframe of SNP linkage data, one row per SNP pair, with columns as one might obtain from a PLINK linkage analysis using the PLINK --r2 option:
-#'         (If no LD.df is supplied, eQTpLot will plot data without LD information)
+#'         (If no LD.df is supplied, exQTL will plot data without LD information)
 #'     BP_A         Basepair position of the first SNP in the LD pair
 #'     SNP_A        Variant name of the first SNP in the LD pair (Not: only SNPs that also appear in the GWAS.df SNP column will be used for LD analysis)
 #'     BP_B         Basepair position of the second SNP in the LD pair
@@ -60,7 +60,7 @@
 #' @param genometrackheight used to set the height of the genome track panel (B), with default setting of 2.
 #'           Gene-dense regions may require more plotting space, whereas gene-poor regions may look better with less plotting space.
 #' @param gbuild the genome build to use, in quotes, for fetching genomic information for panel B.
-#'            Default is "hg19" but can specify "hg38" if needed. This build should match the genome build used for "CHR" and "BP" in the GWAS.df
+#'            Default is "Sscrofa11.1" but can specify "Sscrofa10.2" if needed. This build should match the genome build used for "CHR" and "BP" in the GWAS.df
 #' @param res resolution of the output plot image (default is 300 dpi)
 #' @param wi the width of the output plot image (the height is calculated from this to maintain the correct aspect ratio)
 #' @param CollapseMethod the method used to collapse eQTL p-values and NES across tissues, if a MultiTissue or PanTissue analysis is used. 
@@ -78,10 +78,10 @@
 #' @export
 #' @examples
 #' Saves plot to current directory
-#' eQTpLot(Genes.df = Genes.df.example, GWAS.df = GWAS.df.example,
+#' exQTL(Genes.df = Genes.df.example, GWAS.df = GWAS.df.example,
 #'         eQTL.df = eQTL.df.example, gene = "ACTN3", trait = "LDL",
 #'         getplot=FALSE)
-#' eQTpLot()
+#' exQTL()
 #' 
 
 ########################
@@ -97,12 +97,12 @@
 #require(ggplotify)
 
 
-eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
+exQTL <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
                     sigpvalue_GWAS = 5e-8, sigpvalue_eQTL = 0.05,
                     tissue = "all", range = 200, NESeQTLRange = c(NA,NA), 
                     congruence = FALSE, R2min = 0.2, LDmin = 10, leadSNP = TRUE,
                     LDcolor = "color", ylima = NA, ylimd = NA, xlimd = NA,
-                    genometrackheight = 2, gbuild = "hg19",
+                    genometrackheight = 2, gbuild = "Sscrofa11.1",
                     res = 300, wi = "wi", CollapseMethod = "min",
                     getplot = TRUE, saveplot = TRUE,
                     GeneList = FALSE, TissueList = FALSE){
@@ -110,10 +110,10 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
   
   
   ######################################
-  ######## eQTpLot.gene.list SubFunction
+  ######## exQTL.gene.list SubFunction
   ######################################
   
-  eQTpLot.gene.list <- function(gene){
+  exQTL.gene.list <- function(gene){
     
     ### Set genomic ranges for data selection
     rangebp <- range*1000
@@ -308,10 +308,10 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
   
   
   ######################################
-  ######## eQTpLot.tissue.list SubFunction
+  ######## exQTL.tissue.list SubFunction
   ######################################
   
-  eQTpLot.tissue.list <- function(tissue){
+  exQTL.tissue.list <- function(tissue){
     
     ### Set genomic ranges for data selection
     rangebp <- range*1000
@@ -424,7 +424,7 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
   
   
   ######################################
-  ######## eQTpLot Main Function
+  ######## exQTL Main Function
   ######################################
   
   ########################
@@ -435,9 +435,9 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
     stop("You can only perform either a GeneList analysis or a TissueList analysis, you cannot perform both at the same time. Please set one of these parameters to false.")
   }
   
-  if(GeneList != TRUE & length(gene) >= 2 & TissueList != TRUE){stop("Please select only a single gene to complete eQTpLot visualization. Current selection is: ", paste(gene, " ", sep = "," ))}
+  if(GeneList != TRUE & length(gene) >= 2 & TissueList != TRUE){stop("Please select only a single gene to complete exQTL visualization. Current selection is: ", paste(gene, " ", sep = "," ))}
   
-  if(missing(Genes.df)){Genes.df <- eQTpLot:::genes}
+  if(missing(Genes.df)){Genes.df <- exQTL:::genes}
   
   if(all(c("CHR", "BP", "SNP", "BETA", "P") %in% colnames(GWAS.df))==FALSE) {
     stop("The data supplied to GWAS.df must contain columns 'CHR', 'BP', 'SNP', 'BETA', and 'P'")
@@ -554,7 +554,7 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
     if((length(tissue) <= 1 & ("all" %in% tissue) == FALSE) | (length(tissue) >= 2)){print(paste("'",as.character(unique(tissue)),"'",collapse=", ",sep=""))}
     print('For genes:')
     print(paste("'",as.character(unique(gene)),"'",collapse=", ",sep=""))
-    lapply(gene, eQTpLot.gene.list) %>% dplyr::bind_rows() -> results
+    lapply(gene, exQTL.gene.list) %>% dplyr::bind_rows() -> results
     results %>% dplyr::arrange(as.numeric(pval)) -> results
     print(results$output)
     return("Complete")
@@ -570,11 +570,11 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
     if(length(tissue) <= 1 & tissue != "all") {
       stop('Please provide at least two tissues to perform a TissueList analysis, or set tissue = "all" to perform a TissueList analysis for the gene ', paste(gene), ' across all tissues in eQTL.df')}
     if(tissue == "all"){tissue <- as.character(unique(eQTL.df$Tissue))}
-    print(paste(sep = "", 'eQTpLot TissueList analysis will be completed for tissues:'))
+    print(paste(sep = "", 'exQTL TissueList analysis will be completed for tissues:'))
     print(paste(as.character(unique(tissue)),"'",collapse=", ",sep=""))
     print('For gene:')
     print(paste(gene))
-    lapply(tissue, eQTpLot.tissue.list) %>% dplyr::bind_rows() -> results
+    lapply(tissue, exQTL.tissue.list) %>% dplyr::bind_rows() -> results
     results %>% dplyr::arrange(as.numeric(pval)) -> results
     print(results$output)
     return("Complete")
@@ -925,12 +925,12 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
   print("Generating gene tracks...")
   
   ### Generate Gene Track Plot
-  if(gbuild == "hg19"){hostname <- "https://grch37.ensembl.org"}
-  if(gbuild == "hg38"){hostname <- "https://apr2020.archive.ensembl.org"}
+  if(gbuild == "Sscrofa11.1"){hostname <- "https://www.ensembl.org/Sus_scrofa/"}
+  if(gbuild == "Sscrofa10.2"){hostname <- "https://may2015.archive.ensembl.org/Sus_scrofa/"}
   
   bm <- biomaRt::useMart(host = hostname,
                          biomart = "ENSEMBL_MART_ENSEMBL",
-                         dataset = "hsapiens_gene_ensembl")
+                         dataset = "sscrofa_gene_ensembl")
   
   biomTrack <- Gviz::BiomartGeneRegionTrack(genome = gbuild,
                                             chromosome = median(Combined.eQTL.GWAS.Data$CHR, na.rm = TRUE),
@@ -1287,7 +1287,7 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
              patchwork::plot_annotation(tag_levels = 'A', tag_suffix = ".") & theme(plot.tag = element_text(size = 18), text = element_text(size = 12)))
   }
   
-  pfinal <- p4 + patchwork::plot_annotation(title = paste("eQTpLot analysis for ", trait," and ", gene, "\n", tissuetitle, "\n", sep = ""), theme=theme(plot.title = element_text(size = 19, face = "bold")))
+  pfinal <- p4 + patchwork::plot_annotation(title = paste("exQTL analysis for ", trait," and ", gene, "\n", tissuetitle, "\n", sep = ""), theme=theme(plot.title = element_text(size = 19, face = "bold")))
   
   
   ########################  
@@ -1306,7 +1306,7 @@ eQTpLot <- function(GWAS.df, eQTL.df, Genes.df, LD.df = TRUE, gene, trait,
   }
   if(congruence == TRUE){congruence <- "WithCongruenceData"} else {congruence <- "WithoutCongruenceData"}
   if(isTRUE(LD.df) == FALSE){LDinfo <- "WithLinkageData"} else {LDinfo <- "WithoutLinkageData"}
-  if(saveplot == TRUE){ggsave(pfinal, filename=paste(gene, trait, tissue, congruence, LDinfo, "eQTpLot", "png", sep="."), dpi=res, units="in", height=hgt, width=wi)}
+  if(saveplot == TRUE){ggsave(pfinal, filename=paste(gene, trait, tissue, congruence, LDinfo, "exQTL", "png", sep="."), dpi=res, units="in", height=hgt, width=wi)}
   if(getplot == TRUE){
     return(pfinal)}
   

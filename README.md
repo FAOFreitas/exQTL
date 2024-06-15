@@ -1,7 +1,7 @@
-# eQTpLot
+# exQTL
 
 ## Visualization of Colocalization Between eQTL and GWAS Data
-eQTpLot is an intuitive and user-friendly R package developed for the visualization of colocalization between eQTL and GWAS data. eQTpLot takes as input standard GWAS and eQTL summary statistics, and optional pairwise LD information, to generate a series of plots visualizing colocalization, correlation, and enrichment between eQTL and GWAS signals for a given gene-trait pair. With eQTpLot, investigators can easily generate a series of customizable plots clearly illustrating, for a given gene-trait pair: 
+exQTL is an intuitive and user-friendly R package developed for the visualization of colocalization between eQTL and GWAS data. exQTL takes as input standard GWAS and eQTL summary statistics, and optional pairwise LD information, to generate a series of plots visualizing colocalization, correlation, and enrichment between eQTL and GWAS signals for a given gene-trait pair. With exQTL, investigators can easily generate a series of customizable plots clearly illustrating, for a given gene-trait pair: 
 
 <ol>
 <li>colocalization between GWAS and eQTL signals</li> 
@@ -11,7 +11,7 @@ eQTpLot is an intuitive and user-friendly R package developed for the visualizat
 <li>the relationship between the direction of effect of eQTL signals and the direction of effect of colocalizing GWAS peaks</li> 
 </ol>
 
-These clear and comprehensive plots provide a unique view of eQTL-GWAS colocalization, allowing for a more complete understanding of the interaction between gene expression and trait associations. eQTpLot was developed in R version `4.0.0` and depends on a number of packages for various aspects of its implementation 
+These clear and comprehensive plots provide a unique view of eQTL-GWAS colocalization, allowing for a more complete understanding of the interaction between gene expression and trait associations. exQTL was developed in R version `4.0.0` and depends on a number of packages for various aspects of its implementation 
 
 `c("biomaRt", "dplyr", "GenomicRanges", "ggnewscale", "ggplot2", "ggplotify", "ggpubr", "gridExtra", "Gviz", "LDheatmap", "patchwork")`
 
@@ -34,10 +34,10 @@ These clear and comprehensive plots provide a unique view of eQTL-GWAS colocaliz
       - [Generation of the eQTL Enrichment Plot](#generation-of-the-eqtl-enrichment-plot)
       - [Generation of P-P Correlation Plots](#generation-of-p-p-correlation-plots)
   - [Use Examples](#use-examples)
-    + Example 1 – comparing eQTpLots for two genes within a linkage peak
+    + Example 1 – comparing exQTLs for two genes within a linkage peak
       - [Figure 1](#figure-1)
       - [Figure 2](#figure-2)
-    + Example 2 –The `TissueList` function and adding LD information to eQTpLot
+    + Example 2 –The `TissueList` function and adding LD information to exQTL
       - [Figure 3](#figure-3)
     + Example 3 – Separating Congruous from Incongruous Variants]
       - [Figure 4](#figure-4)
@@ -47,13 +47,13 @@ These clear and comprehensive plots provide a unique view of eQTL-GWAS colocaliz
 
 ## Installation
 
-eQTpLot can be install using `devtools`, either directly from GitHub,
+exQTL can be install using `devtools`, either directly from GitHub,
 
-`devtools::install_github("RitchieLab/eQTpLot")`
+`devtools::install_github("RitchieLab/exQTL")`
 
-or by downloading the repository to your computer, unzipping, and installing the `eQTpLot` folder.
+or by downloading the repository to your computer, unzipping, and installing the `exQTL` folder.
 
-`devtools::install("eQTpLot")`
+`devtools::install("exQTL")`
 
 *Note: For issues installing dependencies, try running the following code prior to installation.
 
@@ -63,7 +63,7 @@ or by downloading the repository to your computer, unzipping, and installing the
 <p>&nbsp;</p>
 
 ## Input files
-At a minimum, eQTpLot requires two input data frames: 
+At a minimum, exQTL requires two input data frames: 
 
 <ol>
 <li>GWAS summary statistics (compatible with PLINK --linear/logistic output format https://www.cog-genomics.org/plink/1.9/formats#assoc_linear) </li>
@@ -90,7 +90,7 @@ The formatting parameters of all both required and both optional input files are
   `SNP`|Variant ID (such as dbSNP ID "rs...". *Note: Must be the same naming scheme as used in `eQTL.df` to ensure proper matching).* Data type: character  
   `P`|p-value for the SNP from GWAS analysis. Data type: numeric 
   `BETA`|beta for the SNP from GWAS analysis. Data type: numeric 
-  `PHE`|*OPTIONAL* Name of the phenotype for which the GWAS data refers, useful if your `GWAS.df` contains data for multiple phenotypes, i.e. PheWAS. If not provided, eQTpLot will assume the GWAS data is for a single phenotype, specified with the `trait` argument. Data type: character 
+  `PHE`|*OPTIONAL* Name of the phenotype for which the GWAS data refers, useful if your `GWAS.df` contains data for multiple phenotypes, i.e. PheWAS. If not provided, exQTL will assume the GWAS data is for a single phenotype, specified with the `trait` argument. Data type: character 
 
 ```
 > data(GWAS.df.example)
@@ -135,7 +135,7 @@ The formatting parameters of all both required and both optional input files are
 #### Genes.df
 `Genes.df` is an optional data frame, one row per gene, which should contain the following columns: 
 
-*Note: eQTpLot automatically loads a default `Genes.df` containing information for most protein-coding genes for genome builds hg19 and hg38, but you may wish to specify our own `Genes.df` data frame if your gene of interest is not included in the default data frame, or if your eQTL data uses a different gene naming scheme (for example, Gencode ID instead of gene symbol)*
+*Note: exQTL automatically loads a default `Genes.df` containing information for most protein-coding genes for genome builds hg19 and hg38, but you may wish to specify our own `Genes.df` data frame if your gene of interest is not included in the default data frame, or if your eQTL data uses a different gene naming scheme (for example, Gencode ID instead of gene symbol)*
 
 **Column**|**Description**
 -----|:-----
@@ -162,7 +162,7 @@ The formatting parameters of all both required and both optional input files are
 #### LD.df
 `LD.df` is an optional data frame of SNP linkage data, one row per SNP pair, compatible with PLINK .ld (--r/--r2) file format https://www.cog-genomics.org/plink/1.9/formats#ld
 
-*Note: If no `LD.df` is supplied, eQTpLot will plot data without LD information*
+*Note: If no `LD.df` is supplied, exQTL will plot data without LD information*
 
 **Column**|**Description**
 -----|:-----
@@ -202,7 +202,7 @@ Argument|Description
 `gene`| gene name or symbol *Note: gene name must match an entry in `Genes.df` for the specified gbuild*
 `sigpvalue_eQTL`|**Default: 0.05**. Significance threshold for eQTL data (variants with eQTL p-value > `sigpvalue_eQTL` are excluded from analysis)
 `sigpvalue_GWAS`|**Default: 5e-8**. Significance threshold for GWAS data (corresponds to the horizontal line in plot A and GWAS significance thresholds for the eQTL enrichment plot). 
-`tissue`|**Default: “all”**. Single tissue or list of tissue names to filter `eQTL.df` by. If this parameter is set to “all”, eQTpLot will pick the smallest eQTL p-value for each SNP across all tissues for a PanTissue analysis (described in more detail below). *Note: the tissue name must match at least one entry in the `eQTL.df` `Tissue` column*
+`tissue`|**Default: “all”**. Single tissue or list of tissue names to filter `eQTL.df` by. If this parameter is set to “all”, exQTL will pick the smallest eQTL p-value for each SNP across all tissues for a PanTissue analysis (described in more detail below). *Note: the tissue name must match at least one entry in the `eQTL.df` `Tissue` column*
 `trait`|name of the GWAS phenotype to analyze. If no `PHE` column is present in `GWAS.df`, this argument will be used as the name for the analyzed phenotype. If `GWAS.df` contains multiple phenotypes in the `PHE` column, this parameter will be used to filter in `GWAS.df` for only this phenotype.
 
 <p>&nbsp;</p>
@@ -217,20 +217,20 @@ Argument|Description
 `genometrackheight`|**Default: 2**. Relative height of the genome track panel (B). Gene-dense regions may require more plotting space, whereas gene-sparse regions may look better with less plotting space.
 `getplot`|**Default: TRUE**. Displays the generated plot in the viewport.
 `LDcolor`|**Default: “color”**. Determines the color palette used in the LDheatmap panel if `LD.df` is supplied. Options are `c("color", "black")` for viridis and grayscales, respectively. 
-`LDmin`|**Default: 10**. Only variants in LD, i.e. R<sup>2</sup> > `R2min`, with at least this many other variants will be plotted in the LDheatmap panel if `LD.df` is supplied. This parameter can be used to thin the number of variants being plotted in the LDheatmap. *Warning: setting `LDmin` and/or `R2min` too low when dealing with high density data may cause performance issues; eQTpLot will give a warning if attempting to plot > 1,000 SNPs*
+`LDmin`|**Default: 10**. Only variants in LD, i.e. R<sup>2</sup> > `R2min`, with at least this many other variants will be plotted in the LDheatmap panel if `LD.df` is supplied. This parameter can be used to thin the number of variants being plotted in the LDheatmap. *Warning: setting `LDmin` and/or `R2min` too low when dealing with high density data may cause performance issues; exQTL will give a warning if attempting to plot > 1,000 SNPs*
 `leadSNP`|Name of the lead SNP to use for plotting LD information in the P-P plots, if `LD.df` is supplied. The name of the variant must be present in both `GWAS.df` and `LD.df`.
 `NESeQTLRange`| a list of maximum and minimum limits `c(min,max)`, to display for the `NES` value in `eQTL.df`. The default setting will adjust the size scale automatically to fit the displayed data, whereas specifying the limits will keep them consistent between plots.
-`R2min`|Only used if `LD.df` is supplied. **Default: 0.1**. The threshold for R<sup>2</sup> to use when selecting LD data from `LD.df`. Variant pairs with R<sup>2</sup> < `R2min` will not be included in the analysis. *Warning: setting `LDmin` and/or `R2min` too low when dealing with high density data may cause performance issues; eQTpLot will give a warning if attempting to plot > 1,000 SNPs*
+`R2min`|Only used if `LD.df` is supplied. **Default: 0.1**. The threshold for R<sup>2</sup> to use when selecting LD data from `LD.df`. Variant pairs with R<sup>2</sup> < `R2min` will not be included in the analysis. *Warning: setting `LDmin` and/or `R2min` too low when dealing with high density data may cause performance issues; exQTL will give a warning if attempting to plot > 1,000 SNPs*
 `range`|**Default: 200**. The range, in kB, to extend the analysis window on either side of the gene of interest, as defined by the `Start` and `Stop` points for the specified `gene` in `Genes.df`.
 `res`|**Default: 300**. The resolution, in dpi, for the output plot image 
-`saveplot`|**Default: TRUE**. Saves the generated plot in the working directory with the name "`gene`.`trait`.`tissue`.Congreunce_Info.LD_Info.eQTpLot.png", using the provided arguments
+`saveplot`|**Default: TRUE**. Saves the generated plot in the working directory with the name "`gene`.`trait`.`tissue`.Congreunce_Info.LD_Info.exQTL.png", using the provided arguments
 `wi`|**Default: 12 if `LD.df` is not supplied, 14 if `LD.df` is supplied**. The width of the output plot image, in inches. The height of the plot is calculated from this argument as well to maintain the appropriate aspect ratio.
 `xlimd`|sets the x-axis upper limit for the P-P plot
 `ylima`|sets the y-axis upper limit in plot A
 `ylimd`|sets the y-axis upper limit for the P-P plot
-`CollapsMethod`|**Default: “min”**. the method used to collapse eQTL p-values and NES across tissues if a MultiTissue or PanTissue analysis is specified. If set to "min”, the p-value and NES from the tissue with the smallest p-value for each variant will be selected. If set to "median" or "mean" the median or mean p-value and NES for each variant, across all specified tissues, will be selected. If set to “meta” eQTpLot will perform a simple sample-size-weighted meta-analysis of the p-values across all specified tissues. If "meta" is specified, `eQTL.df` should include a column with header "N" indicating the number of samples used to derive the given eQTL data. If no column N is present, eQTpLot will give the user the option to complete a meta-analysis assuming equal sample sizes for all tissues, which may lead to inaccurate results. Additionally. if "meta" is specified, no meta-analyzed NES will be computed and all variants will be displayed as the same size in the main eQTpLot figure.
-`Gene.List`| **Default: FALSE**. If set to TRUE, outputs the Pearson correlation between eQTL and GWAS p-values for a given tissue across a user-supplied list of genes, ordered by significance. No plots will be generated. If the user sets the parameter tissue to “all,” or to a list of tissues, eQTpLot will collapse the eQTL data for these tissues by variant, using the method specified by the parameter `CollapseMethod`. This may be a useful parameter to obtain a very simple bird’s-eye view of the genes at a locus whose expression is most closely correlated to a relevant GWAS signal for a given trait.
-`Tissue.List`|**Default: FALSE**. If TRUE, this parameter will output the Pearson correlation between eQTL and GWAS p-values for a given gene across a user-supplied list of tissues, ordered by significance. No plots will be generated. If the user sets the parameter tissue to “all,” eQTpLot will consider each tissue included in `eQTL.df`. This may be a useful parameter to obtain a very simple bird’s-eye view of the tissues in which a given gene’s expression is most closely tied to a relevant GWAS signal for a given trait.
+`CollapsMethod`|**Default: “min”**. the method used to collapse eQTL p-values and NES across tissues if a MultiTissue or PanTissue analysis is specified. If set to "min”, the p-value and NES from the tissue with the smallest p-value for each variant will be selected. If set to "median" or "mean" the median or mean p-value and NES for each variant, across all specified tissues, will be selected. If set to “meta” exQTL will perform a simple sample-size-weighted meta-analysis of the p-values across all specified tissues. If "meta" is specified, `eQTL.df` should include a column with header "N" indicating the number of samples used to derive the given eQTL data. If no column N is present, exQTL will give the user the option to complete a meta-analysis assuming equal sample sizes for all tissues, which may lead to inaccurate results. Additionally. if "meta" is specified, no meta-analyzed NES will be computed and all variants will be displayed as the same size in the main exQTL figure.
+`Gene.List`| **Default: FALSE**. If set to TRUE, outputs the Pearson correlation between eQTL and GWAS p-values for a given tissue across a user-supplied list of genes, ordered by significance. No plots will be generated. If the user sets the parameter tissue to “all,” or to a list of tissues, exQTL will collapse the eQTL data for these tissues by variant, using the method specified by the parameter `CollapseMethod`. This may be a useful parameter to obtain a very simple bird’s-eye view of the genes at a locus whose expression is most closely correlated to a relevant GWAS signal for a given trait.
+`Tissue.List`|**Default: FALSE**. If TRUE, this parameter will output the Pearson correlation between eQTL and GWAS p-values for a given gene across a user-supplied list of tissues, ordered by significance. No plots will be generated. If the user sets the parameter tissue to “all,” exQTL will consider each tissue included in `eQTL.df`. This may be a useful parameter to obtain a very simple bird’s-eye view of the tissues in which a given gene’s expression is most closely tied to a relevant GWAS signal for a given trait.
 
 
 
@@ -240,14 +240,14 @@ Argument|Description
 
 ## Notes on Analysis
 
-In its simplest implementation, eQTplot takes as input two data frames, one of GWAS summary data and the other of eQTL summary data, with the user specifying the name of the gene to be analyzed, the GWAS trait to be analyzed (useful if the GWAS data contains information on multiple associations, as one might obtain from a Phenome-wide Association Study (PheWAS)), and the tissue type to use for the eQTL analysis. Using these inputs, eQTpLot generates a series of plots intuitively illustrating the colocalization of GWAS and eQTL signals in chromosomal space, and the enrichment of and correlation between the candidate gene eQTLs and trait-significant variants. Additional parameters and data can be supplied, such as pairwise variant LD information, allowing for an even more comprehensive visualization of the interaction between eQTL and GWAS data within a given genomic locus.
+In its simplest implementation, exQTL takes as input two data frames, one of GWAS summary data and the other of eQTL summary data, with the user specifying the name of the gene to be analyzed, the GWAS trait to be analyzed (useful if the GWAS data contains information on multiple associations, as one might obtain from a Phenome-wide Association Study (PheWAS)), and the tissue type to use for the eQTL analysis. Using these inputs, exQTL generates a series of plots intuitively illustrating the colocalization of GWAS and eQTL signals in chromosomal space, and the enrichment of and correlation between the candidate gene eQTLs and trait-significant variants. Additional parameters and data can be supplied, such as pairwise variant LD information, allowing for an even more comprehensive visualization of the interaction between eQTL and GWAS data within a given genomic locus.
 
 
 #### Congruence/Incongruence
-One major implementation feature of eQTpLot is the option to divide eQTL/GWAS variants into two groups based on their directions of effect. If the argument `congruence` is set to TRUE, all variants are divided into two groups: congruous, or those with the same direction of effect on gene expression and the GWAS trait (e.g., a variant that is associated with increased expression of the candidate gene and an increase in the GWAS trait), and incongruous, or those with opposite directions of effect on gene expression and the GWAS trait (e.g., a variant that is associated with increased expression of the candidate gene but a decrease in the GWAS trait). The division between congruous and incongruous variants provides a more nuanced view of the relationship between gene expression level and GWAS associations – a variant associated with increased expression of a candidate gene and an increase in a given GWAS trait would seem to be operating through different mechanisms that a variant that is similarly associated with increased expression of the same candidate gene, but a decrease in the same GWAS trait. eQTpLot intuitively visualizes these differences as described below. This distinction also serves to illuminate important underlying biologic difference between different gene-trait pairs, discriminating between genes that appear to suppress a particular phenotype and those that appear to promote it.
+One major implementation feature of exQTL is the option to divide eQTL/GWAS variants into two groups based on their directions of effect. If the argument `congruence` is set to TRUE, all variants are divided into two groups: congruous, or those with the same direction of effect on gene expression and the GWAS trait (e.g., a variant that is associated with increased expression of the candidate gene and an increase in the GWAS trait), and incongruous, or those with opposite directions of effect on gene expression and the GWAS trait (e.g., a variant that is associated with increased expression of the candidate gene but a decrease in the GWAS trait). The division between congruous and incongruous variants provides a more nuanced view of the relationship between gene expression level and GWAS associations – a variant associated with increased expression of a candidate gene and an increase in a given GWAS trait would seem to be operating through different mechanisms that a variant that is similarly associated with increased expression of the same candidate gene, but a decrease in the same GWAS trait. exQTL intuitively visualizes these differences as described below. This distinction also serves to illuminate important underlying biologic difference between different gene-trait pairs, discriminating between genes that appear to suppress a particular phenotype and those that appear to promote it.
 
 #### PanTissue and MultiTissue Analysis
-In some instances, it may be of interest to visualize a variant’s effect on candidate gene expression across multiple tissue types, or even across all tissues. Such analyses can be accomplished by setting the argument `tissue` to a list of tissues contained within `eQTL.df` *(e.g. c(“Adipose_Subcutaneous”, “Adipose_Visceral”))* for a MultiTissue analysis, or by setting the argument `tissue` to “all” for a PanTissue analysis. In a PanTissue analysis, eQTL data across all tissues contained in `eQTL.df` will be collapsed, by variant, into a single pan-tissue eQTL; a similar approach is used in a MultiTissue analysis, but in this case eQTL data will be collapsed, by variant, across only the specified tissues. The method by which eQTpLot collapses eQTL data can be specified with the argument `CollapseMethod`, which accepts as input one of four options – “min,” “median,” “mean,” or “meta.” By setting `CollapseMethod` to “min” (the default), for each variant the tissue with the smallest eQTL p-value will be selected, such that each variant’s most significant eQTL effect, agnostic of tissue, can be visualized. Setting the parameter to “median” or “mean” will visualize the median or mean p-value and NES value for each SNP across all specified tissues. Lastly, setting `CollapseMethod` to “meta” will perform a simple sample-size-weighted meta-analysis *(i.e. a weighted Z-test)* for each variant across all specified tissues, visualizing the resultant p-value for each variant. It should be noted that this meta-analysis method requires a sample size for each eQTL entry in `eQTL.df`, which should be supplied in an optional column “N.” If sample size numbers are not readily available *(as may be the case if directly downloading cis-eQTL data from the GTEx portal)*, eQTpLot gives the user the option to presume that all eQTL data is derived from identical sample sizes across all tissues – this approach may of course yield inaccurate estimates of a variant’s effect in meta-analysis, but may be useful to the user.
+In some instances, it may be of interest to visualize a variant’s effect on candidate gene expression across multiple tissue types, or even across all tissues. Such analyses can be accomplished by setting the argument `tissue` to a list of tissues contained within `eQTL.df` *(e.g. c(“Adipose_Subcutaneous”, “Adipose_Visceral”))* for a MultiTissue analysis, or by setting the argument `tissue` to “all” for a PanTissue analysis. In a PanTissue analysis, eQTL data across all tissues contained in `eQTL.df` will be collapsed, by variant, into a single pan-tissue eQTL; a similar approach is used in a MultiTissue analysis, but in this case eQTL data will be collapsed, by variant, across only the specified tissues. The method by which exQTL collapses eQTL data can be specified with the argument `CollapseMethod`, which accepts as input one of four options – “min,” “median,” “mean,” or “meta.” By setting `CollapseMethod` to “min” (the default), for each variant the tissue with the smallest eQTL p-value will be selected, such that each variant’s most significant eQTL effect, agnostic of tissue, can be visualized. Setting the parameter to “median” or “mean” will visualize the median or mean p-value and NES value for each SNP across all specified tissues. Lastly, setting `CollapseMethod` to “meta” will perform a simple sample-size-weighted meta-analysis *(i.e. a weighted Z-test)* for each variant across all specified tissues, visualizing the resultant p-value for each variant. It should be noted that this meta-analysis method requires a sample size for each eQTL entry in `eQTL.df`, which should be supplied in an optional column “N.” If sample size numbers are not readily available *(as may be the case if directly downloading cis-eQTL data from the GTEx portal)*, exQTL gives the user the option to presume that all eQTL data is derived from identical sample sizes across all tissues – this approach may of course yield inaccurate estimates of a variant’s effect in meta-analysis, but may be useful to the user.
 
 
 
@@ -261,7 +261,7 @@ To generate the main eQTL-GWAS Colocalization Plot (Figures 1A, 2A, 3A, 4A), a l
 
 Within this plot, variants that lack eQTL data for the target gene in `eQTL.df` (or for which the eQTL p-value (P<sub>eQTL</sub>) does not meet the specified significance threshold, `sigpvalue_eQTL` (default value 0.05)) are plotted as grey squares. On the other hand, variants that act as eQTLs for the target gene (withP<sub>eQTL</sub> < `sigpvalue_eQTL`) are plotted as colored triangles, with a color gradient corresponding to the inverse magnitude ofP<sub>eQTL</sub>. As noted above, an analysis can be specified to differentiate between variants with congruous versus incongruous effects on the GWAS trait and candidate gene expression levels – if this is the case, variants with congruous effects will be plotted using a blue color scale, while variants with incongruous effects will be plotted using a red color scale (as seen in Figure 4A).The size of each triangle corresponds to the eQTL normalized effect size (NES) for each variant, while the directionality of each triangle is set to correspond to the direction of effect for the variant on the GWAS trait. 
 
-A depiction of the genomic positions of all genes within the LOI is generated below the plot using the package Gviz (Figures 1B, 2B, 3B, 4B). If LD data is supplied, in the form of `LD.df`, a third panel illustrating the LD landscape of eQTL variants within the LOI is generated using the package LDheatmap (Figure 3C, 4C). To generate this panel, `LD.df` is filtered to contain only eQTL variants that appear in the plotted LOI, and to include only variant pairs that are in LD with each other with R<sup>2</sup> > `R2min` (default value of 0.1). This dataset is further filtered to include only variants that are in LD (with R<sup>2</sup> > `R2min`) with at least a certain number of other variants (user-defined with the argument `LDmin`, default value of 10). These filtering steps are useful in paring down the number of variants to be plotted in the LDheatmap, keeping the most informative variants and reducing the time needed to generate the eQTpLot. A heatmap illustrating the pairwise linkage disequilibrium of the final filtered variant set is subsequently generated below the main eQTL-GWAS Colocalization Plot, with a fill scale corresponding to R<sup>2</sup> for each variant pair. The location of each variant in chromosomal space is indicated at the top of the heatmap, using the same chromosomal coordinates as displayed in panels A and B.  
+A depiction of the genomic positions of all genes within the LOI is generated below the plot using the package Gviz (Figures 1B, 2B, 3B, 4B). If LD data is supplied, in the form of `LD.df`, a third panel illustrating the LD landscape of eQTL variants within the LOI is generated using the package LDheatmap (Figure 3C, 4C). To generate this panel, `LD.df` is filtered to contain only eQTL variants that appear in the plotted LOI, and to include only variant pairs that are in LD with each other with R<sup>2</sup> > `R2min` (default value of 0.1). This dataset is further filtered to include only variants that are in LD (with R<sup>2</sup> > `R2min`) with at least a certain number of other variants (user-defined with the argument `LDmin`, default value of 10). These filtering steps are useful in paring down the number of variants to be plotted in the LDheatmap, keeping the most informative variants and reducing the time needed to generate the exQTL. A heatmap illustrating the pairwise linkage disequilibrium of the final filtered variant set is subsequently generated below the main eQTL-GWAS Colocalization Plot, with a fill scale corresponding to R<sup>2</sup> for each variant pair. The location of each variant in chromosomal space is indicated at the top of the heatmap, using the same chromosomal coordinates as displayed in panels A and B.  
 
 #### Generation of the eQTL Enrichment Plot
 For variants within the LOI with P<sub>GWAS</sub> less than the specified GWAS significance threshold, `sigpvalue_GWAS`, the proportion that are also eQTLs for the gene of interest (with P<sub>eQTL</sub> < `sigpvalue_eQTL`) are calculated and plotted, and the same is done for variants withP<sub>GWAS</sub> > `sigpvalue_GWAS`, (Figure 1C, 2C, 3D, 4D). Enrichment of candidate gene eQTLs among GWAS-significant variants is determined by Fisher’s exact test. If an analysis differentiating between congruous and incongruous variants is specified, these are considered separately in the analysis (as seen in figure 4D).
@@ -269,22 +269,22 @@ For variants within the LOI with P<sub>GWAS</sub> less than the specified GWAS s
 #### Generation of P-P Correlation Plots
 To visualize correlation between P<sub>GWAS</sub> and P<sub>eQTL</sub>, each variant within the LOI is plotted withP<sub>eQTL</sub> along the horizontal axis, and P<sub>GWAS</sub> along the vertical axis. Correlation between the two probabilities is visualized by plotting a best-fit linear regression over the points. The Pearson correlation coefficient and p-value of correlation are computed and displayed on the plot as well (Figure 1D, 2D). If an analysis differentiating between congruous and incongruous variants is specified, separate plots are made for each set of variants and superimposed over each other as a single plot, with linear regression lines/Pearson coefficients displayed for both sets.
 
-If LD data is supplied in the form of `LD.df`, a similar plot is generated, but the fill color of each point is set to correspond to the LD R<sup>2</sup> value for each variant with a specified lead variant, plotted as a green diamond (Figure 3E). This lead variant can be user-specified with the argument `leadSNP` or is otherwise automatically defined as the upper-right-most variant in the P-P plot. This same lead variant is also labelled in the main eQTpLot panel A (Figure 3A). In the case where LD data is provided and an analysis differentiating between congruous and incongruous variants is specified, two separate plots are generated: one for congruous and one for incongruous variants (Figure 4E-F). In each plot, the fill color of each point is set to correspond to the LD R<sup>2</sup> value for each variant with the lead variant for that specific plot (again defined as the upper-right most variant of the P-P plot), with both the congruous and incongruous lead variants labelled in the main eQTpLot panel A (Figure 4A).
+If LD data is supplied in the form of `LD.df`, a similar plot is generated, but the fill color of each point is set to correspond to the LD R<sup>2</sup> value for each variant with a specified lead variant, plotted as a green diamond (Figure 3E). This lead variant can be user-specified with the argument `leadSNP` or is otherwise automatically defined as the upper-right-most variant in the P-P plot. This same lead variant is also labelled in the main exQTL panel A (Figure 3A). In the case where LD data is provided and an analysis differentiating between congruous and incongruous variants is specified, two separate plots are generated: one for congruous and one for incongruous variants (Figure 4E-F). In each plot, the fill color of each point is set to correspond to the LD R<sup>2</sup> value for each variant with the lead variant for that specific plot (again defined as the upper-right most variant of the P-P plot), with both the congruous and incongruous lead variants labelled in the main exQTL panel A (Figure 4A).
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
 ## Use Examples
 
-### Example 1 – comparing eQTpLots for two genes within a linkage peak
+### Example 1 – comparing exQTLs for two genes within a linkage peak
 In this example, a GWAS study of LDL cholesterol levels has identified a significant association with a genomic locus at chr11:66,196,265-66,338,300 (build hg19), which contains a number of plausible candidate genes, including the genes *BBS1* and *ACTN3*. 
 
-Using the `GeneList` function of eQTpLot, the user supplies both the *BBS1* and *ACTN3* genes to eQTpLot, along with all required input data, to obtain a crude estimation of which gene’s eQTL data most closely correlates with the GWAS signal observed at this locus. 
+Using the `GeneList` function of exQTL, the user supplies both the *BBS1* and *ACTN3* genes to exQTL, along with all required input data, to obtain a crude estimation of which gene’s eQTL data most closely correlates with the GWAS signal observed at this locus. 
 
-Calling eQTpLot as follows generates Pearson correlation statistics between P<sub>GWAS</sub> and P<sub>eQTL </sub> for both genes and the LDL trait, using a PanTissue approach and collapsing by method “min” as described above.
+Calling exQTL as follows generates Pearson correlation statistics between P<sub>GWAS</sub> and P<sub>eQTL </sub> for both genes and the LDL trait, using a PanTissue approach and collapsing by method “min” as described above.
 
 ```
-> eQTpLot(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = c("BBS1", "ACTN3"), 
+> exQTL(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = c("BBS1", "ACTN3"), 
           gbuild = "hg19",  trait = "LDL", tissue =  "all", CollapseMethod = "min", 
           GeneList = T)       
 [1] "Checking input data..."
@@ -299,14 +299,14 @@ Calling eQTpLot as follows generates Pearson correlation statistics between P<su
 ```
 
 
-Demonstrating that there is significantly stronger correlation between the GWAS signal at this locus and eQTLs for the gene *BBS1*, compared to the gene *ACTN3*. To visualize these differences, starting with the gene *BBS1*, eQTpLot can be called as follows:
+Demonstrating that there is significantly stronger correlation between the GWAS signal at this locus and eQTLs for the gene *BBS1*, compared to the gene *ACTN3*. To visualize these differences, starting with the gene *BBS1*, exQTL can be called as follows:
 
  ```
- eQTpLot(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = "BBS1", 
+ exQTL(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = "BBS1", 
          gbuild = "hg19",  trait = "LDL", tissue =  "all", CollapseMethod = "min")
 ```
 
-This command will analyze the GWAS data in `GWAS.df.example` within a default 200kb range surrounding the *BBS1* gene, using the preloaded `Genes.df` to define the genomic boundaries of *BBS1* based on genome build hg19. eQTL data from `eQTL.df.example` will be filtered to contain only data pertaining to *BBS1*. Since `tissue` is set to “all”, eQTpLot will perform a PanTissue analysis, as described above. 
+This command will analyze the GWAS data in `GWAS.df.example` within a default 200kb range surrounding the *BBS1* gene, using the preloaded `Genes.df` to define the genomic boundaries of *BBS1* based on genome build hg19. eQTL data from `eQTL.df.example` will be filtered to contain only data pertaining to *BBS1*. Since `tissue` is set to “all”, exQTL will perform a PanTissue analysis, as described above. 
 
 This generates the following plot:
 
@@ -318,7 +318,7 @@ Figure 1 illustrates clear evidence of colocalization between the LDL-significan
 To investigate the possibility that the LDL association signal might also be acting through modulation of the expression of other genes at this locus, the same analysis can be performed, substituting the gene *ACTN3* for the gene *BBS1*, as in the following command:
 
 ```
-eQTpLot(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = "ACTN3", 
+exQTL(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = "ACTN3", 
         gbuild = "hg19",  trait = "LDL", tissue =  "all", CollapseMethod = "min")
 ```
 
@@ -331,11 +331,11 @@ Unlike the previous example for *BBS1*, Figure 2 shows very poor evidence for co
 
 <p>&nbsp;</p>
 
-### Example 2 –The `TissueList` function and adding LD information to eQTpLot
-The plots generated in Example 1 illustrated colocalization between *BBS1* eQTLs and the GWAS peak for LDL cholesterol on chromosome 11, using a PanTissue analysis approach. The user may next wish to investigate if there are specific tissues in which *BBS1* expression is most clearly correlated with the LDL GWAS peak. Using the `TissueList` function of eQTpLot, we can se the Pearson correlation statistics between P<sub>GWAS</sub> and P<sub>eQTL</sub> for *BBS1* and the LDL trait across each tissue contained within `eQTL.df` ranked by degree of correlation:
+### Example 2 –The `TissueList` function and adding LD information to exQTL
+The plots generated in Example 1 illustrated colocalization between *BBS1* eQTLs and the GWAS peak for LDL cholesterol on chromosome 11, using a PanTissue analysis approach. The user may next wish to investigate if there are specific tissues in which *BBS1* expression is most clearly correlated with the LDL GWAS peak. Using the `TissueList` function of exQTL, we can se the Pearson correlation statistics between P<sub>GWAS</sub> and P<sub>eQTL</sub> for *BBS1* and the LDL trait across each tissue contained within `eQTL.df` ranked by degree of correlation:
 
 ```
-> eQTpLot(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene ="BBS1", 
+> exQTL(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene ="BBS1", 
         gbuild = "hg19",  trait = "LDL", tissue =  "all", TissueList = T)
 [1] "For gene:"
 [1] "BBS1"
@@ -349,10 +349,10 @@ The plots generated in Example 1 illustrated colocalization between *BBS1* eQTLs
 [1] "Complete"
 ```
     
-This output demonstrates a strong correlation between LDL cholesterol levels and *BBS1* expression levels in a number of tissues. To further explore these associations, the user can specifically run eQTpLot on data from a single tissue, for example "Whole_Blood", while also supplying LD data to eQTpLot using the argument `LD.df`:
+This output demonstrates a strong correlation between LDL cholesterol levels and *BBS1* expression levels in a number of tissues. To further explore these associations, the user can specifically run exQTL on data from a single tissue, for example "Whole_Blood", while also supplying LD data to exQTL using the argument `LD.df`:
 
 ```
-eQTpLot(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = "BBS1", 
+exQTL(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = "BBS1", 
         gbuild = "hg19", trait = "LDL", tissue =  "Whole_Blood", 
         LD.df =LD.df.example, R2min = 0.25, LDmin = 100)
 ```
@@ -364,15 +364,15 @@ This generates the following plot:
 #### Figure 3
 ![](man/figures/Figure3.jpeg)<!-- -->
 
-Figure 3 is different than Figure 1 (the same eQTpLot analysis carried out without LD information supplied) in two important ways. First, a heat map of the LD landscape for all *BBS1* eQTL variants in the tissue "Whole_Blood" within the LOI is shown in Figure 3C; this heatmap makes it clear that a number of GWAS-significant variants are in strong LD with each other. Second, the P-P plot, Figure 3E, now includes LD information for all plotted variants; a lead variant, rs3741360, has been defined (by default the upper-right most variant on the P-P plot), and all other variants are plotted with a color scale corresponding to their squared coefficient of linkage correlation with rs3741360. rs3741360 is also labeled in Figure 3A for reference. Although colocalization of the BBS1 eQTL and LDL GWAS signal spans the entire association peak, most but not all of the GWAS-significant variants are in strong LD with each other. This implies that there are at least two distinct LD blocks at the *BBS1* locus with strong evidence of colocalization between the *BBS1* eQTL and LDL GWAS signals.
+Figure 3 is different than Figure 1 (the same exQTL analysis carried out without LD information supplied) in two important ways. First, a heat map of the LD landscape for all *BBS1* eQTL variants in the tissue "Whole_Blood" within the LOI is shown in Figure 3C; this heatmap makes it clear that a number of GWAS-significant variants are in strong LD with each other. Second, the P-P plot, Figure 3E, now includes LD information for all plotted variants; a lead variant, rs3741360, has been defined (by default the upper-right most variant on the P-P plot), and all other variants are plotted with a color scale corresponding to their squared coefficient of linkage correlation with rs3741360. rs3741360 is also labeled in Figure 3A for reference. Although colocalization of the BBS1 eQTL and LDL GWAS signal spans the entire association peak, most but not all of the GWAS-significant variants are in strong LD with each other. This implies that there are at least two distinct LD blocks at the *BBS1* locus with strong evidence of colocalization between the *BBS1* eQTL and LDL GWAS signals.
 
 <p>&nbsp;</p>
 
 ### Example 3 – Separating Congruous from Incongruous Variants
-In addition to including LD data in our eQTpLot analysis, we can also include information on the directions of effect of each variant, with respect to the GWAS trait and *BBS1* expression levels. This is accomplished by setting `congruence=TRUE`:
+In addition to including LD data in our exQTL analysis, we can also include information on the directions of effect of each variant, with respect to the GWAS trait and *BBS1* expression levels. This is accomplished by setting `congruence=TRUE`:
 
 ```
-eQTpLot(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = "BBS1", 
+exQTL(GWAS.df = GWAS.df.example, eQTL.df = eQTL.df.example, gene = "BBS1", 
         gbuild = "hg19",  trait = "LDL", tissue =  "Whole_Blood", LD.df = LD.df.example, 
         R2min = 0.25, LDmin = 100, congruence = TRUE)
 ```

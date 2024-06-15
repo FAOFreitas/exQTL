@@ -1,4 +1,4 @@
-Package: eQTpLot
+Package: exQTL
 Title: Visualization of Colocalization Between eQTL and GWAS Data
 Version: 0.0.0.9000
 Authors@R: 
@@ -10,7 +10,7 @@ Authors@R:
 	     family = "Lucas",
 	     role = "cre",
 	     email = "anastasia.lucas.bioinfo@gmail.com"))
-Description: eQTpLot is an R package developed for the visualization of colocalization between 
+Description: exQTL is an R package developed for the visualization of colocalization between 
              eQTL and GWAS data. It requires a number of R packages (biomaRt , dplyr, GenomicRanges, 
              ggnewscale, ggplot2, ggpubr, gridExtra, Gviz, patchwork) and takes as input two data frames 
              (one of GWAS data, and the other of eQTL data), with the user specififying the name of the 
